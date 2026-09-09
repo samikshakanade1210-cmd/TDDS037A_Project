@@ -25,14 +25,17 @@ if "tickers_val" not in st.session_state:
 if col_p1.button("💻 Tech Portfolio"):
     st.session_state.tickers_val = "TCS.NS, INFY.NS, RELIANCE.NS"
     st.session_state.weights_val = "0.40, 0.40, 0.20"
+    st.rerun()
 
 if col_p2.button("🚗 Auto/Steel"):
     st.session_state.tickers_val = "TATAMOTORS.NS, TATASTEEL.NS, HDFCBANK.NS"
     st.session_state.weights_val = "0.50, 0.30, 0.20"
+    st.rerun()
 
 if st.sidebar.button("🧹 Clear All Fields"):
     st.session_state.tickers_val = ""
     st.session_state.weights_val = ""
+    st.rerun()
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("📌 Ticker Format Rules:")
