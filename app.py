@@ -5,10 +5,29 @@ import plotly.express as px
 
 st.set_page_config(page_title="Portfolio Risk Analytics & Health Engine", layout="wide")
 
+# 1. Session State Initialization
+if "tickers_val" not in st.session_state:
+    st.session_state["tickers_val"] = ""
+if "weights_val" not in st.session_state:
+    st.session_state["weights_val"] = ""
+
+# 2. Callbacks for State Updates
+def apply_tech_preset():
+    st.session_state["tickers_val"] = "TCS.NS, INFY.NS, RELIANCE.NS"
+    st.session_state["weights_val"] = "0.40, 0.40, 0.20"
+
+def apply_auto_preset():
+    st.session_state["tickers_val"] = "TATAMOTORS.NS, TATASTEEL.NS, HDFCBANK.NS"
+    st.session_state["weights_val"] = "0.50, 0.30, 0.20"
+
+def clear_all_inputs():
+    st.session_state["tickers_val"] = ""
+    st.session_state["weights_val"] = ""
+
 st.title("🏥 Portfolio Risk Analytics & Health Engine")
 st.caption("A Full-Stack FinTech Dashboard for Real-Time Systematic Risk & Volatility Assessment.")
 
-# Sidebar Configuration (Restored to Previous Layout)
+# Sidebar Configuration
 st.sidebar.header("👤 Investor Configuration")
 investor_name = st.sidebar.text_input("Investor Name", placeholder="Type your name here...")
 
@@ -17,45 +36,31 @@ st.sidebar.caption("Click a preset to auto-fill sample stocks, or leave blank to
 
 col_p1, col_p2 = st.sidebar.columns(2)
 
-# Session State for Presets
-if "tickers_val" not in st.session_state:
-    st.session_state.tickers_val = ""
-    st.session_state.weights_val = ""
-
-if col_p1.button("💻 Tech Portfolio"):
-    st.session_state.tickers_val = "TCS.NS, INFY.NS, RELIANCE.NS"
-    st.session_state.weights_val = "0.40, 0.40, 0.20"
-    st.rerun()
-
-if col_p2.button("🚗 Auto/Steel"):
-    st.session_state.tickers_val = "TATAMOTORS.NS, TATASTEEL.NS, HDFCBANK.NS"
-    st.session_state.weights_val = "0.50, 0.30, 0.20"
-    st.rerun()
-
-if st.sidebar.button("🧹 Clear All Fields"):
-    st.session_state.tickers_val = ""
-    st.session_state.weights_val = ""
-    st.rerun()
+# On-click triggers ensure execution BEFORE UI render
+col_p1.button("💻 Tech Portfolio", on_click=apply_tech_preset)
+col_p2.button("🚗 Auto/Steel", on_click=apply_auto_preset)
+st.sidebar.button("🧹 Clear All Fields", on_click=clear_all_inputs)
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("📌 Ticker Format Rules:")
 st.sidebar.markdown("- **Indian NSE Stocks:** Append `.NS` (e.g., `TATASTEEL.NS`, `RELIANCE.NS`)")
 st.sidebar.markdown("- **Market Benchmark:** Uses `^NSEI` (Nifty 50)")
 
-# Main Form Container (Placeholders used, no hardcoded default values)
+# Main Form Container
 with st.container():
     st.subheader("📊 Define Asset Weights & Tickers")
     st.info("💡 Tip: Asset weights must sum up to exactly 1.0 (e.g., 0.40 + 0.30 + 0.30 = 1.0)")
 
+    # IMPORTANT: DO NOT USE 'value=...' parameter here! Only use 'key'
     tickers_input = st.text_input(
         "Stock Tickers (Comma Separated)", 
-        value=st.session_state.tickers_val,
+        key="tickers_val",
         placeholder="e.g. RELIANCE.NS, TCS.NS, INFY.NS, HDFCBANK.NS"
     )
     
     weights_input = st.text_input(
         "Asset Weights (Comma Separated)", 
-        value=st.session_state.weights_val,
+        key="weights_val",
         placeholder="e.g. 0.40, 0.30, 0.20, 0.10"
     )
 
